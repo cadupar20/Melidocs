@@ -69,8 +69,8 @@ def get_database():
     #Connection String to DB
     #MONGO_URI="mongodb+srv://<username>:<password>@<cluster-name>.mongodb.net/myFirstDatabase"
     MONGO_URI='mongodb://127.0.0.1'
-    import os
-    app.config["MONGO_URI"] = os.getenv("MONGO_URI") #Get MONGO_URI enviroment varstring connection
+    #import os
+    #app.config["MONGO_URI"] = os.getenv("MONGO_URI") #Get MONGO_URI enviroment varstring connection
     #Declare a client instance of MongoDB PyMongo 
     client = MongoClient(MONGO_URI) #replace MONGO_URI for (app)
     db = client ['PAE']

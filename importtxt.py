@@ -32,7 +32,12 @@ def get_database():
     MONGO_URI = 'mongodb://127.0.0.1'
     #Declare a client instance of MongoDB PyMongo 
     client = MongoClient(MONGO_URI)
-    return client ['PAE']
+    db = client ['PAE']
+    #return client ['PAE']
+    #Creating, Select DB
+    col = db['textos']
+    return col
+
 
 def listfiles():
     #import os class
@@ -59,9 +64,12 @@ def InsertFilestoMongo(filestoProcess):
 
         from importtxt import get_database
         #Creating, Select DB
-        db = get_database()
+        #db = get_database()
         #create/select a collation
-        collation = db['textos']
+        #collation = db['textos']
+
+        #create/select a collation
+        collation = get_database()
 
         #MongoDB findone
         textid= collation.find_one({"doc_name":file},{ "_id": 1,"doc_name": 1})
