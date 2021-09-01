@@ -14,7 +14,7 @@ if __name__ == '__main__':
 
 app.config['SECRET_KEY']= '5914e1d26c7abef2b45176ac5423bfc0'
 
-# Declaracion de / raiz
+# Declaracion de path / y home
 @app.route("/home")
 @app.route("/")
 def home():
@@ -23,7 +23,7 @@ def home():
 #from flask import request
 #import json
 
-@app.route("/create_docs")
+#@app.route("/create_docs")
 def create_docs():
     # record the start time for the script
     #start_time = time.time()
@@ -60,6 +60,7 @@ def create_docs():
     #return "<h1>Import Data on MongoDB, Flask!</h1>"
     return render_template ('process_documents.html', title='Create Docs in MongoDB')
 
+# Declaracion de path /api/docs
 @app.route('/api/docs')
 def count_words():
     from flask import jsonify, request
@@ -92,6 +93,7 @@ def count_words():
         resp.status_code = 500
         return resp
 
+# Declaracion de path /import_txt
 @app.route('/import_txt')
 def import_txt():
     from importtxt import importfiles_toDB
@@ -105,6 +107,7 @@ def import_txt():
     return response
 
  # Seguridad del sitio
+# Declaracion de path /login
 @app.route('/login')
 def tokenlogin_access():
     from flask import jsonify
