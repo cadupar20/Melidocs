@@ -20,9 +20,6 @@ app.config['SECRET_KEY']= '5914e1d26c7abef2b45176ac5423bfc0'
 def home():
     return render_template ('home.html')
 
-#from flask import request
-#import json
-
 #@app.route("/create_docs")
 def create_docs():
     # record the start time for the script

@@ -6,7 +6,7 @@ try:
 except Exception as e:
     print("Some modules are missing {}".format(e))
 
-app = Flask(__name__)
+#app = Flask(__name__)
 
 def querymongo(input_docname, input_string):
     from model import get_database
