@@ -9,8 +9,9 @@ except Exception as e:
 app = Flask(__name__)
 
 def querymongo(input_docname, input_string):
-    from getdata import get_database,string_cleanup
-    
+    from model import get_database
+    from getdata import string_cleanup #function to remove special character
+    import re #re Class: string searching and manipulation
     # record the start time for the script
     #start_time = time.time()
     now = datetime.now()
@@ -49,7 +50,6 @@ def querymongo(input_docname, input_string):
 
         #Muestra final sin caracteres, ASCII
         #print("\nTexto ascii: {}".format(texto_ascii))
-        import re #re Class: string searching and manipulation
         #Count frecuency input_string on textid["contents"] (lower case)
         #print("\nFrecuencia de Palabra buscada ('{}'): {}".format(input_string,len(re.findall(" "+input_string+" ", textid["contents"].lower()))))
         #Count frecuency input_string on texto_ascii (lower case)
@@ -62,22 +62,6 @@ def querymongo(input_docname, input_string):
         print("\nFinish - Dia/hora: {}...........".format(formatear_now))
 
         return term_frecuency 
-
-def get_database():
-    #import the MongoClient class
-    from pymongo import MongoClient, errors
-    #Connection String to DB
-    #MONGO_URI="mongodb+srv://<username>:<password>@<cluster-name>.mongodb.net/myFirstDatabase"
-    MONGO_URI='mongodb://127.0.0.1'
-    #import os
-    #app.config["MONGO_URI"] = os.getenv("MONGO_URI") #Get MONGO_URI enviroment varstring connection
-    #Declare a client instance of MongoDB PyMongo 
-    client = MongoClient(MONGO_URI) #replace MONGO_URI for (app)
-    db = client ['PAE']
-    #Creating, Select DB
-    col = db['textos']
-    return col
-
 
 def string_cleanup(x, notwanted):
     import re #re Class: string searching and manipulation

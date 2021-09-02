@@ -24,21 +24,6 @@ def importfiles_toDB():
     print("\nFinish - Dia/hora: {}...........".format(formatear_now))
     return FilesProccesed
 
-def get_database():
-    #import the MongoClient class
-    from pymongo import MongoClient
-    #Connection String to DB
-    #MONGO_URI="mongodb+srv://<username>:<password>@<cluster-name>.mongodb.net/myFirstDatabase"
-    MONGO_URI = 'mongodb://127.0.0.1'
-    #Declare a client instance of MongoDB PyMongo 
-    client = MongoClient(MONGO_URI)
-    db = client ['PAE']
-    #return client ['PAE']
-    #Creating, Select DB
-    col = db['textos']
-    return col
-
-
 def listfiles():
     #import os class
     import os
@@ -62,7 +47,7 @@ def InsertFilestoMongo(filestoProcess):
         #Read-File
         texto = fileopened.read()
 
-        from importtxt import get_database
+        from model import get_database
         #Creating, Select DB
         #db = get_database()
         #create/select a collation

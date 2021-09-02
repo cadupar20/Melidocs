@@ -69,21 +69,20 @@ def count_words():
     print("\ndoc_name: {} - term: {}".format(doc_name,term))
     if doc_name !='NONE' and term !='*':
         if len(doc_name)>4:
-            from getdata import querymongo,get_database, string_cleanup
+            from getdata import querymongo
+            from model import get_database
+            #Validation doc_name has .txt in string
             ExtensionString = ".txt"
             if doc_name.find(ExtensionString) != -1:
                 print ("Found .txt!")
-                #Call MongoDB function
-                term_frecuency=querymongo(doc_name,term)
-                print("Doc_name: {} - Term: {} - Frecuency:{}".format(doc_name,term,term_frecuency))
-                return jsonify(dict(texto=[doc_name, term,term_frecuency])) # or whatever is required
             else:
                 print ("Not found! .txt")
+                ExtensionString = ".txt"
                 doc_name=doc_name+ExtensionString
-                #Call MongoDB function
-                term_frecuency=querymongo(doc_name,term)
-                print("Doc_name: {} - Term: {} - Frecuency:{}".format(doc_name,term,term_frecuency))
-                return jsonify(dict(texto=[doc_name, term,term_frecuency])) # or whatever is required
+            #Call MongoDB function
+            term_frecuency=querymongo(doc_name,term)
+            print("Doc_name: {} - Term: {} - Frecuency:{}".format(doc_name,term,term_frecuency))
+            return jsonify(dict(texto=[doc_name, term,term_frecuency]))
         else:
             resp = jsonify('doc_name not match in the API. Please check the API documentation.')
             resp.status_code = 500
@@ -106,13 +105,13 @@ def import_txt():
     #return  jsonify(dict(message=['TXT inserted',importedTXTFiles, 'TXT updated',updatedTXTFiles]))
     return response
 
- # Seguridad del sitio
+# Seguridad del sitio
 # Declaracion de path /login
 @app.route('/login')
 def tokenlogin_access():
     from flask import jsonify
     import jwt
     import datetime
-    token = jwt.encode({'public_id' : 'id', 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=45)}, app.config['SECRET_KEY'], "HS256")
-    print("token obtenido: {}".format(token))
+    token = jwt.encode({'public_id' : 'id', 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=10)}, app.config['SECRET_KEY'], "HS256")
+    print("token generado: {}".format(token))
     return jsonify({'token' : token})

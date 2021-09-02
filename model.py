@@ -19,3 +19,19 @@ def token_required(f):
     
         return f(current_user, *args, **kwargs)
     return decorator
+
+
+def get_database():
+    #import the MongoClient class
+    from pymongo import MongoClient, errors
+    #Connection String to DB
+    #MONGO_URI="mongodb+srv://<username>:<password>@<cluster-name>.mongodb.net/myFirstDatabase"
+    MONGO_URI='mongodb://127.0.0.1'
+    #import os #for MONGO_URI enviroment connection string 
+    #app.config["MONGO_URI"] = os.getenv("MONGO_URI") #Get MONGO_URI enviroment varstring connection
+    #Declare a client instance of MongoDB PyMongo 
+    client = MongoClient(MONGO_URI) #replace MONGO_URI for (app)
+    db = client ['PAE']
+    #Creating, Select DB
+    col = db['textos']
+    return col
