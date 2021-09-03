@@ -161,9 +161,9 @@ La arquitectura del proyecto en la nube está diseñada en base a servicios de A
 |Resource Group A|Región A|Ubicación lógica de los objetos a crear|NA|NA|NA|
 |Resource Group B|Región B|Ubicación lógica de los objetos a crear|NA|NA|NA|
 |Azure Front Door|Región A|Balanceador de trafico HTTPS activo/pasivo, 	A|NA|NA|
-|Service Plan A|Región A|Hardware donde consume procesador/cpu		El Web app.|A|NA|Vertical		Horizontal|
-|Service Plan B|Región B|Hardware donde consume procesador/cpu|B|NA|Vertical		Horizontal|
-|Web App Service A|Región A|Web app basada en linux e interprete Python, donde se despliega el código Python, se instalan las librerías requerimients.txt		El Web app.|A|Web App A|Depende del Service Plan|
+|Service Plan A|Región A|Hardware donde consume procesador/cpu		el Web app.|A|NA|Vertical		Horizontal|
+|Service Plan B|Región B|Hardware donde consume procesador/cpu		el Web app.|B|NA|Vertical		Horizontal|
+|Web App Service A|Región A|Web app basada en linux e interprete Python, donde se despliega el código Python, se instalan las librerías requerimients.txt|A|Web App A|Depende del Service Plan|
 |Web App Service B|Región B|Web app basada en linux e interprete Python, donde se despliegael código Python, se instalan las librerías requerimients.txt|B|Web App B|Depende del Service Plan|
 |Atlas DB (Mongo)|SaaS|Es el servicio de Mongo DB para Cloud, tipo Saas ofrece replica en mltiples regiones|Database|Mínimo 3 nodos|SI|
 
@@ -173,4 +173,4 @@ La arquitectura del proyecto en la nube está diseñada en base a servicios de A
 	• Azure Front Door: es la propuesta como balanceador de carga para enturar el tráfico HTTPS, definiendo región prioritaria A y región secundaria B. También maneja métodos de afinidad por sesión y prioridad de lista de servidores. Este servicio de Azure también nos brinda Application Gateway y Applicacion Firewall para garantizar vulnerabilidades conocidas. El componente front end de acceso a los usuarios y detrás tendrá los 2 Web Apps brindando un servicio balanceado HTTPS.
 	• Service Plans: Es el componente que nos da los recursos de memoria y cpu necesario para ejecutar nuestra aplicación Python, se puede basar en Windows o en Linux. En este caso se definieron tener (2) Service Plans, en regiones distintas. Tenemos 2 formas de escalar cada uno de ellos, verticalmente y horizontalmente. Verticalmente es mediante modelos serie P, serie S o serie PxV. En el caso de entornos no critico podemos usar los modelos F1, D1 o B1.  El otro modo de escalar es horizontalmente, donde en este caso se definen la cantidad de instancias (manual o automático). El escalar horizontalmente en forma automático tiene variantes como ser mínimo, máximo, predeterminado y de qué modo se escala basándose en métricas de carga por uso de CPU o basado en número de instancias.
 	• Web App: Tiene el código de mi aplicación, el intérprete Python y sus requerimientos. Soporta PHP, Java, .NET, Python, Ruby, etc.![image](https://user-images.githubusercontent.com/83100373/131996881-16455c4d-7dfd-4647-84ef-0656226a079a.png)
-	• Atlas DB (SaaS): 
+	• Atlas DB (SaaS): es el servicio de MongoDB en la nube, puede ser contratado a traves de los distintos provedores (AWS, Azure, GC o directo a Mongo). Soportado en Cluster Multi-Region y tambien Multi-Cloud, en este caso de piensa en Azure distribuyendo los 2 nodos en una región y 1 nodo en una región distinta. https://docs.atlas.mongodb.com/cluster-config/multi-cloud-distribution/#std-label-create-cluster-multi-region
