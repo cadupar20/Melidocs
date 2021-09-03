@@ -156,9 +156,6 @@ La arquitectura del proyecto en la nube está diseñada en base a servicios de A
 
 ### Componentes para Alta Disponibilidad y Escalabilidad del proyecto
 
-|Funciones|Descripción|Archivo|Nivel|
-|----|-----|-----|-----|
-
 |Componente|Ubicación|Descripción|Resource Group|Alta Disponibilidad|Escalabilidad|
 | ------------ | ------------ |------------ |------------ |------------ |------------ |
 |Resource Group A|Región A|Ubicación lógica de los objetos a crear|NA|NA|NA|
