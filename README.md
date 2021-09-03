@@ -152,6 +152,8 @@ Este proyecto es open source, puede ser utilizado y compartido libremente.
 
 La arquitectura del proyecto en la nube está diseñada en base a servicios de Azure, pero puede ser deplegada en AWS o GC.
 
+![](https://raw.githubusercontent.com/cadupar20/melidocs/main/2021-09-02_233347.png)
+
 ### Componentes para Alta Disponibilidad y Escalabilidad del proyecto
 
 |Funciones|Descripción|Archivo|Nivel|
