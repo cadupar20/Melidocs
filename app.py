@@ -1,10 +1,12 @@
 try:
     #import the Flask / HTML Render Template / Time-> class
-    from flask import Flask, render_template, flash, url_for
+    from flask import Flask, render_template, flash, url_for, jsonify, request
     #import the MongoClient class
     from pymongo import MongoClient
     #import the datetime class
     from datetime import datetime
+    #import Jwt Extented for Manage Token 
+    from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required, JWTManager
 except Exception as e:
     print("Some modules are missing {}".format(e))
 
@@ -13,6 +15,10 @@ if __name__ == '__main__':
     app.run(host="localhost", port=8000, debug=True)
 
 app.config['SECRET_KEY']= '5914e1d26c7abef2b45176ac5423bfc0'
+# Setup the Flask-JWT-Extended extension
+app.config["JWT_SECRET_KEY"] = "5914e1d26c7abef2b45176ac5423bfc0"
+jwt = JWTManager(app)
+
 
 # Declaracion de path / y home
 @app.route("/home")
@@ -20,45 +26,9 @@ app.config['SECRET_KEY']= '5914e1d26c7abef2b45176ac5423bfc0'
 def home():
     return render_template ('home.html')
 
-#@app.route("/create_docs")
-def create_docs():
-    # record the start time for the script
-    #start_time = time.time()
-    now = datetime.now()
-    formatear_now = now.strftime("%A, %d %B, %Y at %X")
-    print("Dia/hora: {}...........".format(formatear_now))
-    # MongoDB Connection String
-    MONGO_URI='mongodb://127.0.0.1'
-    # declare a client instance of the MongoDB PyMongo driver 
-    client = MongoClient(MONGO_URI)
-      
-    #Creating, Select DB
-    db = client ['PAE']
-    #Creating, Select Collation
-    collation = db['items']
-    #Objets to insert
-    product1= {"name":"mouse"}
-    product2= {"name":"keyboard"}
-    #Insert Objects on collation
-    results = collation.insert_many([product1,product2])
-    
-    # print the API response from the MongoDB server
-    print ("\ninsert_many() result:", results)
-    # get the total numbers of docs inserted
-    total_docs = len(results.inserted_ids)
-
-    # print the number of docs entries inserted
-    print ("total entries inserted:", total_docs)
-
-    #print ("El resultado de mongo : {}".format(results.__inserted_ids))
-    #results = collation.find()
-        #for r in results:
-            #print ("El resultado de mongo : {}".format(r))
-    #return "<h1>Import Data on MongoDB, Flask!</h1>"
-    return render_template ('process_documents.html', title='Create Docs in MongoDB')
-
 # Declaracion de path /api/docs
 @app.route('/api/docs')
+@jwt_required()
 def count_words():
     from flask import jsonify, request
     doc_name = request.args.get('doc_name', default = "NONE", type = str)
@@ -91,9 +61,9 @@ def count_words():
 
 # Declaracion de path /import_txt
 @app.route('/import_txt')
+@jwt_required()
 def import_txt():
     from importtxt import importfiles_toDB
-    from flask import jsonify
     #Function to process .txt file from ..\downloads
     updatedTXTFiles,importedTXTFiles=importfiles_toDB()
     jsonfile=jsonify(dict(message=['TXT inserted',importedTXTFiles, 'TXT updated',updatedTXTFiles]))
@@ -104,11 +74,32 @@ def import_txt():
 
 # Seguridad del sitio
 # Declaracion de path /login
-@app.route('/login')
-def tokenlogin_access():
-    from flask import jsonify
+@app.route('/login1')
+def login():
     import jwt
     import datetime
     token = jwt.encode({'public_id' : 'id', 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=10)}, app.config['SECRET_KEY'], "HS256")
     print("token generado: {}".format(token))
     return jsonify({'token' : token})
+
+
+# Create a route to authenticate your users and return JWTs. The
+# create_access_token() function is used to actually generate the JWT.
+@app.route("/login", methods=["POST"])
+def tokenlogin_access():
+    import datetime
+    username = request.json.get("username", None)
+    password = request.json.get("password", None)
+    if username != "test" or password != "test":
+        return jsonify({"msg": "Bad username or password"}), 401
+    access_token = create_access_token(identity=username, fresh=True)
+    return jsonify(access_token=access_token)
+
+# Protect a route with jwt_required, which will kick out requests
+# without a valid JWT present.
+@app.route("/protected", methods=["GET"])
+@jwt_required()
+def protected():
+    # Access the identity of the current user with get_jwt_identity
+    current_user = get_jwt_identity()
+    return jsonify(logged_in_as=current_user), 200
