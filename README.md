@@ -26,6 +26,41 @@ Ejemplo: http://127.0.0.1:5000/api/docs?term=pero&doc_name=10825-8.txt
   ]
 }
 ```
+
+El path posee seguridad de Token, deben incluirse en el Header con método Get:
+
+GET /api/docs?term=habia&amp;doc_name=10825-8.txt HTTP/1.1
+Host: 127.0.0.1:5000
+Content-Type: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6dHJ1ZSwiaWF0IjoxNjMwNzIwMzAyLCJqdGkiOiJjNTM4OTIwOC1lZjEzLTQxZGQtOGM3MS1iMjVhYWYyYTQ3OTMiLCJ0eXBlIjoiYWNjZXNzIiwic3ViIjoidGVzdCIsIm5iZiI6MTYzMDcyMDMwMiwiZXhwIjoxNjMwNzIxMjAyfQ.iXip9s7hJJ_MLBvJ3Hd63pp2kIHdl_VF73lWF0KxOd0
+Cache-Control: no-cache
+Postman-Token: e54f1b32-924d-61a1-88c1-9d0e54aa5cb5
+
+La URL /login es la que nos brinda el token necesario para poder utilizar el sitio. 
+Se accede mediante la URL http://127.0.0.1:5000/login, se deben utilizar el método POST, pasandole los parametros username y password.
+
+POST /login HTTP/1.1
+Host: 127.0.0.1:5000
+Content-Type: application/json
+Cache-Control: no-cache
+Postman-Token: c0f80b5f-88f6-2ca9-090a-807aef99615a
+
+{
+    "username": "test",
+    "password": "test"
+}
+
+La URL de Importar TXT http://127.0.0.1:5000/import_txt tambien posee seguridad mediante Token.
+(debe obtenerse un Token activo para ejecutar dicho proceso)
+GET /import_txt HTTP/1.1
+Host: 127.0.0.1:5000
+Content-Type: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6dHJ1ZSwiaWF0IjoxNjMwNzIwMzAyLCJqdGkiOiJjNTM4OTIwOC1lZjEzLTQxZGQtOGM3MS1iMjVhYWYyYTQ3OTMiLCJ0eXBlIjoiYWNjZXNzIiwic3ViIjoidGVzdCIsIm5iZiI6MTYzMDcyMDMwMiwiZXhwIjoxNjMwNzIxMjAyfQ.iXip9s7hJJ_MLBvJ3Hd63pp2kIHdl_VF73lWF0KxOd0
+Cache-Control: no-cache
+Postman-Token: b447299c-0f3b-4bfa-4608-32f569f07eae
+
+Todas estas URLs se puede testear con [postman.com](https://www.postman.com/downloads/)
+
 ## Funciones Principales Python
 A continuacion describimos las funciones.
 
@@ -58,6 +93,7 @@ A continuacion describimos los pasos de instalación.
 		b. $env:FLASK_APP = "app"
 		c. $env:FLASK_ENV = "development"
 		d. flask run
+
 (FLASK_APP="app" FLASK_ENV="development"solo para Windows)
 
 ### Instalación de MongoDB
@@ -110,8 +146,9 @@ Iniciar el motor mongodb, desde una linea de comando:
 
 ## Web-Frameworks
 *Librarias para la gestion del framework.*
-- [Flask](http://flask.pocoo.org/) - A microframework for Python.
+- [Flask](http://flask.pocoo.org/) - microframework de Python.
 - `jsonify, request, render_template, flash, url_for`
+- [Flask-JWT-Extended](https://flask-jwt-extended.readthedocs.io/en/stable/installation/) - librería Python para manejo de Json Web Token.
 ### Librerias-estandar
 - `datetime`
 - `re`
@@ -122,7 +159,9 @@ Iniciar el motor mongodb, desde una linea de comando:
 
 Archivos Python y librarias:
 - `app.py` es el root  de la aplicación, es la que genera todas las URLs que utiliza la aplicación.
-- `.gitignore` directorios ignorados a sincronizar en github
+- `getdata.py` contiene las funciones para contar las frecuencia de los terminos.
+ - `getdata.py` contiene las funciones para importar los archivos .txt del directorio downloads.
+- `.gitignore` directorios ignorados a sincronizar en github.
 - `.README.md` documentación del proyecto
 - `model.py` posee la conexión con MongoDB, incluye el string de conexión con la base.
 - `requirements.txt` contiene todos los paquetes Pyhton dependencias para instalar con `pip`
@@ -147,6 +186,7 @@ Este proyecto es open source, puede ser utilizado y compartido libremente.
 - [Flask](http://flask.pocoo.org)
 - [Pymongo](https://github.com/mongodb/mongo-python-driver)
 - [MongoDB](https://www.mongodb.com/try/download/community)
+- [Flask-JWT-Extended](https://flask-jwt-extended.readthedocs.io/en/stable/installation/)
 
 ## Implementación en servicio Cloud
 
