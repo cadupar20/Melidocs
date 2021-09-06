@@ -176,6 +176,8 @@ A partir de ahí utilizando ese token, accede a las URLs de la aplicación, siem
 
 Para este prototipo no se se uso una atenticación externa (identity) sino que dentro del codigo de la función tokenlogin_access se validan los datos recibidos en el mensaje Json request.json.get("username", None) / password = request.json.get("password", None).
 
+Cada URL que se quiere proteger, se hizo uso de la función @jwt_required(), la cual invoca a la libreria mencionada de Python y le solicita el Token generdo durante la autenticacíon. Si el request no lo posee dentro del header del mensaje, no se podrá seguir ejecutando el resto de la funcíon (ya sea lectura de datos o importación e archivos).
+
 ### Comando para descargar el proyecto, en Github (dentro de la carpeta c:\git o en su directorio seleccionado)
 ```bash
 git clone https://github.com/cadupar20/melidocs.git
