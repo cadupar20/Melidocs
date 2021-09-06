@@ -166,6 +166,15 @@ Archivos Python y librarias:
 - `model.py` posee la conexión con MongoDB, incluye el string de conexión con la base.
 - `requirements.txt` contiene todos los paquetes Pyhton dependencias para instalar con `pip`
 
+### Seguridad implementada
+ Se hizo uso de la libreria Pyhton Flask-JWT-Extended para la generación de Token, a laa URL /login (modo prueba username=test, password=test). Dicho Token es requerido para acceder a las URLs de la aplicación /import_txt y /api/docs.
+![](https://github.com/cadupar20/melidocs/blob/main/2021-09-06_125003.jpg)
+
+El cliente, hace una petición POST enviando en mensaje Json el usuario y contraseña, y realiza el proceso de autenticación. Se comprueba usuario y contraseña, de ser validos, generar el token JWT para devolverlo al usuario access_token dentro de un mensaje Json.
+
+A partir de ahí utilizando ese token, accede a las URLs de la aplicación, siempre que ese token JWT dentro de un encabezado, Authorization: Bearer XXXXXXX, siendo Bearer el tipo de prefijo seguido de todo el contenido del token.
+
+Para este prototipo no se se uso una atenticación externa (identity) sino que dentro del codigo de la función tokenlogin_access se validan los datos recibidos en el mensaje Json request.json.get("username", None) / password = request.json.get("password", None).
 
 ### Comando para descargar el proyecto, en Github (dentro de la carpeta c:\git o en su directorio seleccionado)
 ```bash
@@ -187,7 +196,8 @@ Este proyecto es open source, puede ser utilizado y compartido libremente.
 - [Pymongo](https://github.com/mongodb/mongo-python-driver)
 - [MongoDB](https://www.mongodb.com/try/download/community)
 - [Flask-JWT-Extended](https://flask-jwt-extended.readthedocs.io/en/stable/installation/)
-
+- [JWT](https://openwebinars.net/blog/que-es-json-web-token-y-como-funciona/)
+	
 ## Implementación en servicio Cloud
 
 La arquitectura del proyecto en la nube está diseñada en base a servicios de Azure, pero puede ser deplegada en AWS o GC.
