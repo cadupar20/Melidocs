@@ -5,19 +5,18 @@
 Se utilizó el framework de **[Bootstrap](https://getbootstrap.com/)** para el uso amigable de las URLs.
 
 El proyecto consta de varias URLS a mencionar:
-- / (home o root): acceso al home del sitio
-- /import_txt: pre-proceso de importación de archivos de texto (extensión .txt)
-- /api/docs/: API para contar la frecuencia de 1 palabra de acuerdo a los parámetros.
-- /login: URL para autenticación, genera un token para el manejo de seguridad de la sesión.
+- `/` (home o root): acceso al home del sitio
+- `/import_txt`: pre-proceso de importación de archivos de texto (extensión .txt)
+- `/api/docs`: API para contar la frecuencia de 1 palabra de acuerdo a los parámetros.
+- `/login`: URL para autenticación, genera un token para el manejo de seguridad de la sesión.
 
 Cabe mencionar que la interfaz /api/docs maneja 2 parámetros:
-'''bash
-term = debe tener como valor una palabra o número a buscar (no debe incluir espacios)
-doc_name = nombre del documento donde se desea buscar/contar la palabra. El nombre ingresado puede o no incluir la extensión .txt al final del parámetro.
-'''
++ term = debe tener como valor una palabra o número a buscar (no debe incluir espacios)
++ doc_name = nombre del documento donde se desea buscar/contar la palabra. El nombre ingresado puede o no incluir la extensión .txt al final del parámetro.
+
 Ejemplo: http://127.0.0.1:5000/api/docs?term=pero&doc_name=10825-8.txt
 
-'''bash
+```bash
 {
 "texto": [
 "10825-8.txt",
@@ -25,20 +24,21 @@ Ejemplo: http://127.0.0.1:5000/api/docs?term=pero&doc_name=10825-8.txt
 87
 ]
 }
-'''
+```
 
 El path posee seguridad de Token, deben incluirse en el Header con método Get:
 
+```bash
 GET /api/docs?term=habia&amp;doc_name=10825-8.txt HTTP/1.1
 Host: 127.0.0.1:5000
 Content-Type: application/json
 Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6dHJ1ZSwiaWF0IjoxNjMwNzIwMzAyLCJqdGkiOiJjNTM4OTIwOC1lZjEzLTQxZGQtOGM3MS1iMjVhYWYyYTQ3OTMiLCJ0eXBlIjoiYWNjZXNzIiwic3ViIjoidGVzdCIsIm5iZiI6MTYzMDcyMDMwMiwiZXhwIjoxNjMwNzIxMjAyfQ.iXip9s7hJJ_MLBvJ3Hd63pp2kIHdl_VF73lWF0KxOd0
 Cache-Control: no-cache
 Postman-Token: e54f1b32-924d-61a1-88c1-9d0e54aa5cb5
-
+```
 La URL /login es la que nos brinda el token necesario para poder utilizar el sitio.
 Se accede mediante la URL http://127.0.0.1:5000/login, se deben utilizar el método POST, pasándole los parámetros username y password.
-
+```bash
 POST /login HTTP/1.1
 Host: 127.0.0.1:5000
 Content-Type: application/json
@@ -49,16 +49,17 @@ Postman-Token: c0f80b5f-88f6-2ca9-090a-807aef99615a
 "username": "test",
 "password": "test"
 }
-
+```
 La URL de Importar TXT http://127.0.0.1:5000/import_txt también posee seguridad mediante Token.
 (debe obtenerse un Token activo para ejecutar dicho proceso)
+```bash
 GET /import_txt HTTP/1.1
 Host: 127.0.0.1:5000
 Content-Type: application/json
 Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6dHJ1ZSwiaWF0IjoxNjMwNzIwMzAyLCJqdGkiOiJjNTM4OTIwOC1lZjEzLTQxZGQtOGM3MS1iMjVhYWYyYTQ3OTMiLCJ0eXBlIjoiYWNjZXNzIiwic3ViIjoidGVzdCIsIm5iZiI6MTYzMDcyMDMwMiwiZXhwIjoxNjMwNzIxMjAyfQ.iXip9s7hJJ_MLBvJ3Hd63pp2kIHdl_VF73lWF0KxOd0
 Cache-Control: no-cache
 Postman-Token: b447299c-0f3b-4bfa-4608-32f569f07eae
-
+```
 Todas estas URLs se puede testear con [postman.com](https://www.postman.com/downloads/)
 
 ## Funciones Principales Python
@@ -78,33 +79,33 @@ A continuación describimos las funciones.
 ## Instalación
 A continuación describimos los pasos de instalación.
 
-1. 'Phyton version 3.6.9' (Descargar [Python](https://www.python.org/) del sitio oficial.)
-2. 'Instalar Python' (se recomienda seleccionar la opción "Customize installation", **quitar** td/tk and idle, Python test suite y en opciones avanzadas **"Add path Python to environment variables"**)
-3. 'mkdir c:\Git\melidocs' crear un directorio donde se va a trabajar con el proyecto.
-4. 'cd c:\Git\melidocs' ingresar al directorio vacio del proyecto (abrir línea de comando luego de la instalación de Python)
-5. 'pip install virtualenv' instalación del entorno virtual
-6. 'virtualenv venv' Se configura el entorno virtual en el directorio del proyecto
-7. '.\venv\Scripts\activate' Activar el modo virtual
-8. 'c:\Git\melidocs\requirements.txt' descargar el archivo **requirements.txt** en el directorio raíz del proyecto. El mismo contiene todas las librerías necesarias para realizar la implementación.
-8. 'c:\Git\melidocs&gt;pip install -r requirements.txt' Instalamos en el entorno virtual las librerías a utilizar (flask y pymongo)
+1. `Phyton version 3.6.9` (Descargar [Python](https://www.python.org/) del sitio oficial.)
+2. `Instalar Python` (se recomienda seleccionar la opción "Customize installation", **quitar** td/tk and idle, Python test suite y en opciones avanzadas **"Add path Python to environment variables"**)
+3. `mkdir c:\Git\melidocs` crear un directorio donde se va a trabajar con el proyecto.
+4. `cd c:\Git\melidocs` ingresar al directorio vacio del proyecto (abrir línea de comando luego de la instalación de Python)
+5. `pip install virtualenv` instalación del entorno virtual
+6. `virtualenv venv` Se configura el entorno virtual en el directorio del proyecto
+7. `.\venv\Scripts\activate` Activar el modo virtual
+8. `c:\Git\melidocs\requirements.txt` descargar el archivo **requirements.txt** en el directorio raíz del proyecto. El mismo contiene todas las librerías necesarias para realizar la implementación.
+8. `c:\Git\melidocs&gt;pip install -r requirements.txt` Instalamos en el entorno virtual las librerías a utilizar (flask y pymongo)
 9. Para iniciar el servicio, setear las variables de entorno:
-a. Ingresar al directorio del proyecto c:\Git\melidocs
-b. $env:FLASK_APP = "app"
-c. $env:FLASK_ENV = "development"
-d. flask run
++ Ingresar al directorio del proyecto c:\Git\melidocs
++ $env:FLASK_APP = "app"
++ $env:FLASK_ENV = "development"
++ flask run
 
 (FLASK_APP="app" FLASK_ENV="development"solo para Windows)
 
 ### Instalación de MongoDB
 Descargar la versión Community del sitio oficial [MongoDB](https://www.mongodb.com/try/download/community).
 
-a. version 4.4.8
-b. zip
-c. windows
-Crear un directorio donde se va a dejar el motor MongoDB, ejemplo 'c:\mongodb\4.4\bin'. Crear directorios por default donde se crearan las bases de datos 'c:\data\db\'
++ a. version 4.4.8
++ b. zip
++ c. windows
 
-Crear y configurar archivo 'mongod.cfg' en el directorio de instalación de MongoDB 'c:\mongodb\4.4\bin':
-'''bash
+Crear un directorio donde se va a dejar el motor MongoDB, ejemplo `c:\mongodb\4.4\bin`. Crear directorios por default donde se crearan las bases de datos `c:\data\db\`
+Crear y configurar archivo `mongod.cfg` en el directorio de instalación de MongoDB `c:\mongodb\4.4\bin`:
+```bash
 #network interfaces
 net:
 port: 27017
@@ -112,13 +113,13 @@ bindIp: 127.0.0.1
 
 security:
 authorization: enabled
-'''
+```
 - **port** 27017 es el puerto por defecto de MongoDB.
 - **bindIP** es la dirección IP por la que atenderá las peticiones el demonio MongoDB.
 - **security authorization** indica que está activa la configuración de seguridad básica.
 
 Se debe crear una cuenta de MongoDB, como admin la cual es el root del motor, se debe resguardar de forma segura:
-'''bash
+```bash
 C:\mongodb\4.4\bin&gt;mongo --eval "db.createUser({user:'mongoadmin',pwd:'Xi467234.QRTexv1',roles:[{db:'admin',role:'root'}]})" admin
 
 MongoDB shell version v4.4.8
@@ -134,9 +135,11 @@ Successfully added user: {
 }
 ]
 }
-'''
+```
 Iniciar el motor mongodb, desde una línea de comando:
-'C:\mongodb\4.4\bin&gt;mongod.exe'
+```bash 
+C:\mongodb\4.4\bin&gt;mongod.exe
+```
 
 ## Database-drivers
 *Librarías para conectar y gestionar bases de datos.*
@@ -146,24 +149,24 @@ Iniciar el motor mongodb, desde una línea de comando:
 ## Web-Frameworks
 *Librarías para la gestión del framework.*
 - [Flask](http://flask.pocoo.org/) - microframework de Python.
-- 'jsonify, request, render_template, flash, url_for'
+- `jsonify, request, render_template, flash, url_for`
 - [Flask-JWT-Extended](https://flask-jwt-extended.readthedocs.io/en/stable/installation/) - librería Python para manejo de Json Web Token.
 ### Librerías-estándar
-- 'datetime'
-- 're'
-- 'os'
-- 'unicodedata'
-- 'jwt'
-- 'functools import wraps'
+- `datetime`
+- `re`
+- `os`
+- `unicodedata`
+- `jwt`
+- `functools import wraps`
 
 Archivos Python y librarías:
-- 'app.py' es el root de la aplicación, es la que genera todas las URLs que utiliza la aplicación.
-- 'getdata.py' contiene las funciones para contar la frecuencia de los términos.
-- 'getdata.py' contiene las funciones para importar los archivos .txt del directorio downloads.
-- '.gitignore' directorios ignorados a sincronizar en github.
-- '.README.md' documentación del proyecto
-- 'model.py' posee la conexión con MongoDB, incluye el string de conexión con la base.
-- 'requirements.txt' contiene todos los paquetes Pyhton dependencias para instalar con 'pip'
+- `app.py' es el root de la aplicación, es la que genera todas las URLs que utiliza la aplicación.
+- `getdata.py` contiene las funciones para contar la frecuencia de los términos.
+- `getdata.py` contiene las funciones para importar los archivos .txt del directorio downloads.
+- `.gitignore` directorios ignorados a sincronizar en github.
+- `.README.md` documentación del proyecto
+- `model.py` posee la conexión con MongoDB, incluye el string de conexión con la base.
+- `requirements.txt` contiene todos los paquetes Pyhton dependencias para instalar con `pip`
 
 ### Seguridad implementada
 Se hizo uso de la librería Pyhton Flask-JWT-Extended para la generación de Token, a laa URL /login (modo prueba username=test, password=test). Dicho Token es requerido para acceder a las URLs de la aplicación /import_txt y /api/docs.
@@ -178,15 +181,9 @@ Para este prototipo no se usó una autenticación externa (identity) sino que de
 Cada URL que se quiere proteger, se hizo uso de la función @jwt_required(), la cual invoca a la librería mencionada de Python y le solicita el Token generdo durante la autenticación. Si el request no lo posee dentro del header del mensaje, no se podrá seguir ejecutando el resto de la función (ya sea lectura de datos o importación de archivos).
 
 ### Comando para descargar el proyecto, en Github (dentro de la carpeta c:\git o en su directorio seleccionado)
-'''bash
+```bash
 git clone https://github.com/cadupar20/melidocs.git
-'''
-## Browser soportado
-
-| [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt="IE / Edge" width="24px" height="24px" /&gt;](http://godban.github.io/browsers-support-badges/)<br/&gt;Edge |
-| --------- |
-| last version Edge|
-
+```
 ## Licencia
 
 Este proyecto es open source, puede ser utilizado y compartido libremente.
@@ -218,10 +215,10 @@ La arquitectura del proyecto en la nube está diseñada basándose en servicios 
 |Web App Service B|Región B|Web app basada en linux e interprete Python, donde se despliega el código Python, se instalan las librerías requerimients.txt|B|Web App B|Depende del Service Plan|
 |Atlas DB (Mongo)|SaaS|Es el servicio de Mongo DB para Cloud, tipo Saas ofrece réplica en mltiples regiones|Database|Mínimo 3 nodos|SI|
 
-• Regiones: Son las ubicaciones de los servicios Cloud. La propuesta está pensada en al menos 2 regiones (donde debe tenerse presente la latencia entre los clientes y los servicios HTTPS/MongoDB. En este caso región "A" puede ser EAST US y región "B" EAST US 2.
++ Regiones: Son las ubicaciones de los servicios Cloud. La propuesta está pensada en al menos 2 regiones (donde debe tenerse presente la latencia entre los clientes y los servicios HTTPS/MongoDB. En este caso región "A" puede ser EAST US y región "B" EAST US 2.
 https://www.azurespeed.com/Information/AzureRegions (regiones posibles a seleccionar)
 También puede evaluarse las availavility zone de cada región (en el caso de que las tenga), algunas regiones lo tienen e implica que tiene varios Datacenter como un servicio mayor alta disponibilidad para los servicios de Azure.
-• Azure Front Door: es la propuesta como balanceador de carga para enrutar el tráfico HTTPS, definiendo región prioritaria A y región secundaria B. También maneja métodos de afinidad por sesión y prioridad de lista de servidores. Este servicio de Azure también nos brinda Application Gateway y Applicacion Firewall para garantizar vulnerabilidades conocidas. El componente front end de acceso a los usuarios y detrás tendrá los 2 Web Apps brindando un servicio balanceado HTTPS.
-• Service Plans: Es el componente que nos da los recursos de memoria y cpu necesario para ejecutar nuestra aplicación Python, se puede basar en Windows o en Linux. En este caso se definieron tener (2) Service Plans, en regiones distintas. Tenemos 2 formas de escalar cada uno de ellos, verticalmente y horizontalmente. Verticalmente es mediante modelos serie P, serie S o serie PxV. En el caso de entornos no crítico podemos usar los modelos F1, D1 o B1. El otro modo de escalar es horizontalmente, donde en este caso se definen la cantidad de instancias (manual o automático). El escalar horizontalmente en forma automático tiene variantes como ser mínimo, máximo, predeterminado y de qué modo se escala basándose en métricas de carga por uso de CPU o basado en número de instancias.
-• Web App: Tiene el código de mi aplicación, el intérprete Python y sus requerimientos. Soporta PHP, Java, .NET, Python, Ruby, etc.!
-• Atlas DB (SaaS): es el servicio de MongoDB en la nube, puede ser contratado a traves de los distintos provedores (AWS, Azure, GC o directo a Mongo). Soportado en Cluster Multi-Región y también Multi-Cloud, en este caso se piensa en Azure distribuyendo los 2 nodos en una región y 1 nodo en una región distinta. [cluster-multi-región](https://docs.atlas.mongodb.com/cluster-config/multi-cloud-distribution/#std-label-create-cluster-multi-region)
++ Azure Front Door: es la propuesta como balanceador de carga para enrutar el tráfico HTTPS, definiendo región prioritaria A y región secundaria B. También maneja métodos de afinidad por sesión y prioridad de lista de servidores. Este servicio de Azure también nos brinda Application Gateway y Applicacion Firewall para garantizar vulnerabilidades conocidas. El componente front end de acceso a los usuarios y detrás tendrá los 2 Web Apps brindando un servicio balanceado HTTPS.
++ Service Plans: Es el componente que nos da los recursos de memoria y cpu necesario para ejecutar nuestra aplicación Python, se puede basar en Windows o en Linux. En este caso se definieron tener (2) Service Plans, en regiones distintas. Tenemos 2 formas de escalar cada uno de ellos, verticalmente y horizontalmente. Verticalmente es mediante modelos serie P, serie S o serie PxV. En el caso de entornos no crítico podemos usar los modelos F1, D1 o B1. El otro modo de escalar es horizontalmente, donde en este caso se definen la cantidad de instancias (manual o automático). El escalar horizontalmente en forma automático tiene variantes como ser mínimo, máximo, predeterminado y de qué modo se escala basándose en métricas de carga por uso de CPU o basado en número de instancias.
++ Web App: Tiene el código de mi aplicación, el intérprete Python y sus requerimientos. Soporta PHP, Java, .NET, Python, Ruby, etc.!
++ Atlas DB (SaaS): es el servicio de MongoDB en la nube, puede ser contratado a traves de los distintos provedores (AWS, Azure, GC o directo a Mongo). Soportado en Cluster Multi-Región y también Multi-Cloud, en este caso se piensa en Azure distribuyendo los 2 nodos en una región y 1 nodo en una región distinta. [cluster-multi-región](https://docs.atlas.mongodb.com/cluster-config/multi-cloud-distribution/#std-label-create-cluster-multi-region)
