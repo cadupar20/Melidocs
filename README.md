@@ -7,7 +7,7 @@ Se utilizó el framework de **[Bootstrap](https://getbootstrap.com/)** para el u
 El proyecto consta de varias URLS a mencionar:
 - / (home o root): acceso al home del sitio
 - /importtxt: pre-proceso de importación de archivos de text (extension .txt)
-- /api/docs/: API para contar la frecuencia de 1 palabra de acuerdo a los parametro.
+- /api/docs/: API para contar la frecuencia de 1 palabra de acuerdo a los parámetros.
 - /login: URL para autenticación, genera un token para el manejo de seguridad de la sesión.
 
 Cabe mencionar que la interface /api/docs maneja 2 parametros:
