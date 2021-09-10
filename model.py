@@ -1,3 +1,8 @@
+import pymongo
+from pymongo import collation
+from pymongo.errors import PyMongoError
+
+
 def token_required(f):
     from flask import request, jsonify
     import jwt
@@ -23,10 +28,10 @@ def token_required(f):
 
 def get_database():
     #import the MongoClient class
-    from pymongo import MongoClient, errors
+    from pymongo import MongoClient
     #Connection String to DB
     #MONGO_URI="mongodb+srv://<username>:<password>@<cluster-name>.mongodb.net/myFirstDatabase"
-    MONGO_URI='mongodb://127.0.0.1'
+    MONGO_URI='mongodb://127.0.0.1/?serverSelectionTimeoutMS=3000'
     #import os #for MONGO_URI enviroment connection string 
     #app.config["MONGO_URI"] = os.getenv("MONGO_URI") #Get MONGO_URI enviroment varstring connection
     #Declare a client instance of MongoDB PyMongo 

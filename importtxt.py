@@ -36,7 +36,11 @@ def InsertFilestoMongo(filestoProcess):
     count_upddocs=0
     count_newdocs=0
     new_documents=[]
+    count_execution_time=0
     #print ("\nLargo Lista files: {}".format(len(filestoProcess)))
+    #06-AGO
+    import time
+    start = time.time()
     for file in filestoProcess:
         # do for each file
         #print ("Nombre Archivo a abrir:{}".format(file))
@@ -49,10 +53,6 @@ def InsertFilestoMongo(filestoProcess):
 
         from model import get_database
         #Creating, Select DB
-        #db = get_database()
-        #create/select a collation
-        #collation = db['textos']
-
         #create/select a collation
         collation = get_database()
 
@@ -80,4 +80,9 @@ def InsertFilestoMongo(filestoProcess):
  
         #Close file 
         fileopened.close()
-    return count_upddocs,count_newdocs
+    end =  time.time()
+    count_execution_time= end-start
+    print("Execution time in seconds: ",(count_execution_time))
+    print("Cantidad de documentos actualizados: {}".format(count_upddocs))
+    print("Cantidad de documentos insertados: {}".format(count_newdocs))
+    return count_upddocs,count_newdocs,count_execution_time
