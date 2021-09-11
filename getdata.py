@@ -13,23 +13,22 @@ def querymongo(input_docname, input_string):
     # record the start time for the script
     #06-AGO
     import time
-    start = time.time()
     now = datetime.now()
     formatear_now = now.strftime("%A, %d %B, %Y at %X")
     print("\nStart - Dia/hora: {}...........".format(formatear_now))
-
     #create/select a collation
     collation = get_database()
 
     import pymongo.errors #import ConnectionFailure,ServerSelectionTimeoutError    
     try:
+        start = time.time()
         #MongoDB findone
         textid= collation.find_one({"doc_name":input_docname},{ "_id": 1,"doc_name": 1, "contents": 1})
         #Validate textif if
         if not textid:
             doc_notfound="doc_name/term not found!"
             print (doc_notfound)
-            return doc_notfound
+            return doc_notfound,0
         else:
             print("\nWord: {}".format(input_string))
             print("id: {}".format(textid["_id"]))
@@ -48,9 +47,6 @@ def querymongo(input_docname, input_string):
             texto_ascii=texto_ascii.translate({ord(i): ' ' for i in ',.:;"[?()'})
 
             #Muestra final sin caracteres, ASCII
-            #print("\nTexto ascii: {}".format(texto_ascii))
-            #Count frecuency input_string on textid["contents"] (lower case)
-            #print("\nFrecuencia de Palabra buscada ('{}'): {}".format(input_string,len(re.findall(" "+input_string+" ", textid["contents"].lower()))))
             #Count frecuency input_string on texto_ascii (lower case)
             term_frecuency=len(re.findall(" "+input_string+" ", texto_ascii.lower()))
             print("\nFrecuencia de Palabra buscada ASCII ('{}'): {}".format(input_string,term_frecuency))
@@ -64,13 +60,13 @@ def querymongo(input_docname, input_string):
             return term_frecuency,(end-start) 
     except pymongo.errors.ConnectionFailure as e:
         print("Could not connect to MongoDB: (ConnectionFailure) {}".format(e))
-        return "ConnectionFailure to MongoDB"
+        return "ConnectionFailure to MongoDB",0
     except pymongo.errors.ServerSelectionTimeoutError as e:
         print("Could not connect to MongoDB: (Timeout) {} ".format(e))
-        return "Timeout to MongoDB"
+        return "Timeout to MongoDB",0
     except Exception as e:
         print("Exception: {}".format(e))
-        return "Exception to MongoDB"
+        return "Exception to MongoDB",0
 
 
 def string_cleanup(x, notwanted):
@@ -82,12 +78,9 @@ def string_cleanup(x, notwanted):
 def Frecuency_Words_MongoDB (input_docname, input_string):    
     #06-AGO Time Control
     import time
-    start = time.time()
     now = datetime.now()
     formatear_now = now.strftime("%A, %d %B, %Y at %X")
     print("\nStart - Dia/hora: {}...........".format(formatear_now))
-    term_frecuency=0
-
     #Import Mongo Connection
     from model import get_database
     #create/select a collation
@@ -95,27 +88,28 @@ def Frecuency_Words_MongoDB (input_docname, input_string):
     #New libraries for MongoDB aggregate
     from bson.regex import Regex
     from bson.son import SON
-    from bson import decode_all
     #Manage MongoDB Issue Errors 
     import pymongo.errors #import ConnectionFailure,ServerSelectionTimeoutError    
     try:
-        cursorlist=[]
+        cursorlist=[] #to use with aggregate
         #MongoDB Find Doc
-        #incluir script MongoDB ******NUEVO*****
+        start = time.time()
         cursor = collation.aggregate([{"$match": {'doc_name':input_docname}},
                         {"$project": {"occurences": {"$regexFindAll": {"input": "$contents",
-                        "regex": Regex("[#\s._-]"+input_docname+"[-_\s.%,;'$?!:#]"),#Regex("[\u00A1\u00BF'\\['#'\"'\\s._-]virgilio[-_\\s.%'\\)',;'\\['$?!:#'\"']"),
-                        "options": "isx"}}}},
+                        "regex": Regex("[¡¿'\('\[',("");:'\"'#\s._-]"+input_string+"[-_\s.%'\)''\(''\[''\]',;'$?!:'\"'#]"),"options": "is"}}}},
+                         {"$unwind": "$occurences"},
                         {"$group": {"_id": 'null',"totalOccurences": {"$sum": 1}}},
                         {"$sort":SON([ ("totalOccurences", -1) ])} 
                         ])
+        end =  time.time()
+        #retrieve cursor variable
         for i in cursor:
             cursorlist=i
-        
+ 
         if not cursorlist:
             doc_notfound="doc_name/term not found!"
             print (doc_notfound)
-            return doc_notfound
+            return doc_notfound,0
         else:
             print("\nWord: {}".format(input_string))
             print("doc_name: {}".format(input_docname))
@@ -125,16 +119,15 @@ def Frecuency_Words_MongoDB (input_docname, input_string):
             now = datetime.now()
             formatear_now = now.strftime("%A, %d %B, %Y at %X")
             print("\nFinish - Dia/hora: {}...........".format(formatear_now))
-            end =  time.time()
             print("Execution time in seconds: ",(end-start))
             return cursorlist["totalOccurences"],(end-start)
 
     except pymongo.errors.ConnectionFailure as e:
         print("Could not connect to MongoDB: (ConnectionFailure) {}".format(e))
-        return "ConnectionFailure to MongoDB"
+        return "ConnectionFailure to MongoDB",0
     except pymongo.errors.ServerSelectionTimeoutError as e:
         print("Could not connect to MongoDB: (Timeout) {} ".format(e))
-        return "Timeout to MongoDB"
+        return "Timeout to MongoDB",0
     except Exception as e:
         print("Exception: {}".format(e))
-        return "Exception to MongoDB" 
+        return "Exception to MongoDB",0 
