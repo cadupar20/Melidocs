@@ -92,40 +92,34 @@ def Frecuency_Words_MongoDB (input_docname, input_string):
     from model import get_database
     #create/select a collation
     collation = get_database()
+    #New libraries for MongoDB aggregate
+    from bson.regex import Regex
+    from bson.son import SON
+    from bson import decode_all
+    #Manage MongoDB Issue Errors 
     import pymongo.errors #import ConnectionFailure,ServerSelectionTimeoutError    
     try:
+        cursorlist=[]
         #MongoDB Find Doc
-        #incluir script MongoDB ******NUEVO******
-        #textid=collation.find_one({"doc_name":input_docname},{ "_id": 0,"doc_name": 1, "contents": 1})
-
-        # Created with Studio 3T, the IDE for MongoDB - https://studio3t.com/
-        pipeline = [
-            {"$match": {"doc_name": "10825-8.txt"}}, 
-            {"$project": {"occurences": {"$regexFindAll": {
-                            "input": "$contents",
-                            "regex": regex("[\u00A1\u00BF'\\['#'\"'\\s._-]virgilio[-_\\s.%'\\)',;'\\['$?!:#'\"']"),
-                            "options": "isx"
-                        }
-                    }
-                }
-            }, 
-            {"$unwind":"$occurences"}, 
-            {"$group": {"_id": None,"totalOccurences": {"$sum": 1.0 }}
-            }, 
-            {"$sort":([ ("totalOccurences", -1) ])
-            }       ]
-        textid=collation.aggregate(pipeline)
-
-        #Validate textif if
-        if not textid:
+        #incluir script MongoDB ******NUEVO*****
+        cursor = collation.aggregate([{"$match": {'doc_name':input_docname}},
+                        {"$project": {"occurences": {"$regexFindAll": {"input": "$contents",
+                        "regex": Regex("[#\s._-]"+input_docname+"[-_\s.%,;'$?!:#]"),#Regex("[\u00A1\u00BF'\\['#'\"'\\s._-]virgilio[-_\\s.%'\\)',;'\\['$?!:#'\"']"),
+                        "options": "isx"}}}},
+                        {"$group": {"_id": 'null',"totalOccurences": {"$sum": 1}}},
+                        {"$sort":SON([ ("totalOccurences", -1) ])} 
+                        ])
+        for i in cursor:
+            cursorlist=i
+        
+        if not cursorlist:
             doc_notfound="doc_name/term not found!"
             print (doc_notfound)
             return doc_notfound
         else:
             print("\nWord: {}".format(input_string))
-            print("doc_name: {}".format(textid["doc_name"]))
-            print("totalOccurences: {}".format(textid["totalOccurences"]))
-         
+            print("doc_name: {}".format(input_docname))
+            print("totalOccurences: {}".format(cursorlist["totalOccurences"]))
 
             # record the finish time for Mongo steps
             now = datetime.now()
@@ -133,7 +127,7 @@ def Frecuency_Words_MongoDB (input_docname, input_string):
             print("\nFinish - Dia/hora: {}...........".format(formatear_now))
             end =  time.time()
             print("Execution time in seconds: ",(end-start))
-            return term_frecuency,(end-start)
+            return cursorlist["totalOccurences"],(end-start)
 
     except pymongo.errors.ConnectionFailure as e:
         print("Could not connect to MongoDB: (ConnectionFailure) {}".format(e))

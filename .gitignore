@@ -2,3 +2,5 @@
 downloads/
 #Folder src sin uso
 src/
+#Folder Python Cache
+_pycache_
