@@ -10,11 +10,25 @@ El proyecto consta de varias URLS a mencionar:
 - `/api/docs`: API para contar la frecuencia de 1 palabra de acuerdo a los parámetros.
 - `/login`: URL para autenticación, genera un token para el manejo de seguridad de la sesión.
 
+**Actualización**
+(2) nuevas URLs agregadas, mejoras a la función de Contar de Frecuencia de término:
+- `/api/docsV2?`: API versión 2 de frecuencia de 1 palabra de acuerdo a los parámetros, utilizando Aggregation como contador de frecuencia y regex para omitir caracteres especiales **¡¿([,")%'\',;'$?!:#;:'#._-**
+- `/api/docsV3?`: API versión 2 de frecuencia de 1 palabra de acuerdo a los parámetros, utilizando translate para eliminar caracteres especiales.
+
+**MongoDB*
+Se crea 1 indice dentro de MongoDB para mejorar la performance de busqueda del documento:
+![](https://raw.githubusercontent.com/cadupar20/melidocs/main/Index_docname.jpg)
+![](https://raw.githubusercontent.com/cadupar20/melidocs/main/Index_properties.jpg)
+
 Cabe mencionar que la interfaz /api/docs maneja 2 parámetros:
 + term = debe tener como valor una palabra o número a buscar (no debe incluir espacios)
 + doc_name = nombre del documento donde se desea buscar/contar la palabra. El nombre ingresado puede o no incluir la extensión .txt al final del parámetro.
 
 Ejemplo: http://127.0.0.1:5000/api/docs?term=pero&doc_name=10825-8.txt
+
+Ejemplo versión 2: http://127.0.0.1:5000/api/docsV2?term=pero&doc_name=10825-8.txt
+
+Ejemplo versión 3: http://127.0.0.1:5000/api/docsV3?term=pero&doc_name=10825-8.txt
 
 ```bash
 {
@@ -36,6 +50,24 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6dHJ1ZSwia
 Cache-Control: no-cache
 Postman-Token: e54f1b32-924d-61a1-88c1-9d0e54aa5cb5
 ```
+**Actualización**
+```bash
+GET /api/docsV2?term=había&amp;doc_name=10825-8.txt HTTP/1.1
+Host: 127.0.0.1:5000
+Content-Type: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6dHJ1ZSwiaWF0IjoxNjMwNzIwMzAyLCJqdGkiOiJjNTM4OTIwOC1lZjEzLTQxZGQtOGM3MS1iMjVhYWYyYTQ3OTMiLCJ0eXBlIjoiYWNjZXNzIiwic3ViIjoidGVzdCIsIm5iZiI6MTYzMDcyMDMwMiwiZXhwIjoxNjMwNzIxMjAyfQ.iXip9s7hJJ_MLBvJ3Hd63pp2kIHdl_VF73lWF0KxOd0
+Cache-Control: no-cache
+Postman-Token: e54f1b32-924d-61a1-88c1-9d0e54aa5cb5
+```
+```bash
+GET /api/docsV3?term=había&amp;doc_name=10825-8.txt HTTP/1.1
+Host: 127.0.0.1:5000
+Content-Type: application/json
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6dHJ1ZSwiaWF0IjoxNjMwNzIwMzAyLCJqdGkiOiJjNTM4OTIwOC1lZjEzLTQxZGQtOGM3MS1iMjVhYWYyYTQ3OTMiLCJ0eXBlIjoiYWNjZXNzIiwic3ViIjoidGVzdCIsIm5iZiI6MTYzMDcyMDMwMiwiZXhwIjoxNjMwNzIxMjAyfQ.iXip9s7hJJ_MLBvJ3Hd63pp2kIHdl_VF73lWF0KxOd0
+Cache-Control: no-cache
+Postman-Token: e54f1b32-924d-61a1-88c1-9d0e54aa5cb5
+```
+
 La URL /login es la que nos brinda el token necesario para poder utilizar el sitio.
 Se accede mediante la URL http://127.0.0.1:5000/login, se deben utilizar el método POST, pasándole los parámetros username y password.
 ```bash
@@ -75,6 +107,12 @@ A continuación describimos las funciones.
 |count_words|inicia la URL /api/docs, toma los parámetros recibidos en el query string, valida lo recibo y separa los parametros term y doc_name. También invoca a la función querymongo |[app.py]| Principal |
 |querymongo|mediante los parámetros term y doc_name, solicita la collation, valida que exista el nombre .txt en MongoDB. Luego trae el campo contents con el texto y finalmente busca en el string el "term" cuantas veces aparece (frecuencia) |[getdata.py]|Secundaria|
 |string_cleanup|elimina del string caracteres especiales .#¡!¿?()/@%$; |[getdata.py]|Secundaria|
+
+### Actualización
+|Funciones|Descripción|Archivo|Nivel|
+|----|-----|-----|-----|
+|Frecuency_Words_MongoDB|mediante los parámetros term y doc_name, se conecta a MongoDB, con la la opción Aggregation MongoDB para contar término dentro del documento parámetro (doc_name). También hace un de Regex (expresiones regulares) para omitir caracteres especiales, acentos, comillas y guiones|[getdata.py]|Secundaria|
+|contar_palabra|mediante los parámetros term y doc_name, valida que exista el nombre .txt en MongoDB. Al buscar el término dentro del campo contents lo hace mediante translate (para quitar caracteres especiales y re.findall para encontrar el término parámetro|[getdata.py]|Secundaria|
 
 ## Instalación
 A continuación describimos los pasos de instalación.
@@ -195,6 +233,8 @@ Este proyecto es open source, puede ser utilizado y compartido libremente.
 - [MongoDB](https://www.mongodb.com/try/download/community)
 - [Flask-JWT-Extended](https://flask-jwt-extended.readthedocs.io/en/stable/installation/)
 - [JWT](https://openwebinars.net/blog/que-es-json-web-token-y-como-funciona/)
+- [Re](https://docs.python.org/3/library/re.html/)
+- [Pymongo Aggregation with BSON](https://pymongo.readthedocs.io/en/stable/examples/aggregation.html)
 
 ## Implementación en servicio Cloud
 
