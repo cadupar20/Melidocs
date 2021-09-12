@@ -24,6 +24,8 @@ def querymongo(input_docname, input_string):
         start = time.time()
         #MongoDB findone
         textid= collation.find_one({"doc_name":input_docname},{ "_id": 1,"doc_name": 1, "contents": 1})
+        end1 =  time.time()
+        print("Execution DB time in seconds: ",(end1-start))
         #Validate textif if
         if not textid:
             doc_notfound="doc_name/term not found!"
@@ -71,6 +73,7 @@ def querymongo(input_docname, input_string):
 
 def string_cleanup(x, notwanted):
     import re #re Class: string searching and manipulation
+    #remove special characters "notwanted"
     for item in notwanted:
         x = re.sub(item, ' ', x)
     return x
@@ -130,4 +133,68 @@ def Frecuency_Words_MongoDB (input_docname, input_string):
         return "Timeout to MongoDB",0
     except Exception as e:
         print("Exception: {}".format(e))
-        return "Exception to MongoDB",0 
+        return "Exception to MongoDB",0
+
+
+
+
+def contar_palabra (input_docname, input_string):
+    from model import get_database
+    from getdata import string_cleanup #function to remove special character
+    import re #re Class: string searching and manipulation
+    # record the start time for the script
+    import time
+    now = datetime.now()
+    formatear_now = now.strftime("%A, %d %B, %Y at %X")
+    print("\nStart - Dia/hora: {}...........".format(formatear_now))
+    #create/select a collation
+    collation = get_database()
+
+    import pymongo.errors #import ConnectionFailure,ServerSelectionTimeoutError    
+    try:
+        start = time.time()
+        #MongoDB findone
+        textid= collation.find_one({"doc_name":input_docname},{ "_id": 1,"doc_name": 1, "contents": 1})
+        end1 =  time.time()
+        print("Execution DB time in seconds: ",(end1-start))
+        #Validate textif if
+        if not textid:
+            doc_notfound="doc_name/term not found!"
+            print (doc_notfound)
+            return doc_notfound,0
+        else:
+            #print("\nWord: {}".format(input_string))
+            #print("id: {}".format(textid["_id"]))
+            #print("doc_name: {}".format(textid["doc_name"]))
+     
+            #Remove other special characters
+            texto=textid["contents"].translate({ord(i): ' ' for i in '&\_¡!-"¿?#@!;,:().[]'})
+            #print("contents: {}".format(texto.lower()))
+     
+            #Count frecuency on texto
+            term_frecuency=len(re.findall(input_string.lower(), texto.lower()))
+            
+            # record the finish time for the script
+            now = datetime.now()
+            formatear_now = now.strftime("%A, %d %B, %Y at %X")
+            print("\nFinish - Dia/hora: {}...........".format(formatear_now))
+            end =  time.time()
+            print("Execution time in seconds: ",(end-start))
+            return term_frecuency,(end-start) 
+    except pymongo.errors.ConnectionFailure as e:
+        print("Could not connect to MongoDB: (ConnectionFailure) {}".format(e))
+        return "ConnectionFailure to MongoDB",0
+    except pymongo.errors.ServerSelectionTimeoutError as e:
+        print("Could not connect to MongoDB: (Timeout) {} ".format(e))
+        return "Timeout to MongoDB",0
+    except Exception as e:
+        print("Exception: {}".format(e))
+        return "Exception to MongoDB",0
+
+
+def string_cleanup(x, notwanted):
+    import re #re Class: string searching and manipulation
+    #remove special characters "notwanted"
+    for item in notwanted:
+        x = re.sub(item, ' ', x)
+    return x

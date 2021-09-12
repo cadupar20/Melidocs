@@ -130,3 +130,39 @@ def word_frecuency():
         resp = jsonify('doc_name and/or term not found in query string. Please check the API documentation.')
         resp.status_code = 500
         return resp
+
+
+# Declaracion de path /api/docs Version 2
+# http://127.0.0.1:5000/api/docsV2?term=<palabra>&doc_name=<doc_name>.txt
+@app.route('/api/docsV3')
+@jwt_required()
+def word_frecuency2():
+    from flask import jsonify, request
+    doc_name = request.args.get('doc_name', default = "NONE", type = str)
+    term = request.args.get('term', default = '*', type = str)
+    print("\ndoc_name: {} - term: {}".format(doc_name,term))
+    if doc_name !='NONE' and term !='*':
+        if len(doc_name)>4:
+            return_time=0
+            from getdata import contar_palabra
+            #from model import get_database
+            #Validation doc_name has .txt in string
+            ExtensionString = ".txt"
+            if doc_name.find(ExtensionString) != -1:
+                print ("Found .txt!")
+            else:
+                print ("Not found! .txt")
+                ExtensionString = ".txt"
+                doc_name=doc_name+ExtensionString
+            #Call Frecuency Words function
+            term_frecuency,return_time=contar_palabra(doc_name,term)
+            print("Doc_name: {} - Term: {} - Frecuency:{}".format(doc_name,term,term_frecuency))
+            return jsonify(dict(texto=[doc_name, term,term_frecuency,return_time]))
+        else:
+            resp = jsonify('doc_name not match in the API. Please check the API documentation.')
+            resp.status_code = 500
+            return resp           
+    else:
+        resp = jsonify('doc_name and/or term not found in query string. Please check the API documentation.')
+        resp.status_code = 500
+        return resp
