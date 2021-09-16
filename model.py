@@ -30,8 +30,8 @@ def get_database():
     #import the MongoClient class
     from pymongo import MongoClient
     #Connection String to DB
-    #MONGO_URI="mongodb+srv://<username>:<password>@<cluster-name>.mongodb.net/myFirstDatabase"
     MONGO_URI='mongodb://127.0.0.1/?serverSelectionTimeoutMS=3000'
+    #MONGO_URI='mongodb+srv://cadupar1973:QRZ81VncrWaH8j0n@pae-itops-001.jv5cl.mongodb.net/PAE?retryWrites=true&w=majority'
     #import os #for MONGO_URI enviroment connection string 
     #app.config["MONGO_URI"] = os.getenv("MONGO_URI") #Get MONGO_URI enviroment varstring connection
     #Declare a client instance of MongoDB PyMongo 
